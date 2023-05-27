@@ -1,0 +1,56 @@
+.col-md {
+  flex: 1 0 0%;
+  border: 2px solid grey;
+  margin: 0 10px 0 0;
+  border-radius: 10px; }
+  .col-md h2 {
+    margin: 1em 0 0;
+    text-align: center; }
+
+.my-5 {
+  margin-top: 0 !important; }
+
+.dropdown button,
+.dropdown .btn-check:checked + .btn-primary,
+.dropdown .btn-check:active + .btn-primary, .dropdown .btn-primary:active,
+.dropdown .btn-primary.active, .dropdown .show > .btn-primary.dropdown-toggle {
+  width: 100%;
+  background: none !important;
+  border: none !important;
+  border-bottom: 1px solid #ced4da !important;
+  padding: 1.5rem 0;
+  box-shadow: none !important; }
+
+#userType {
+  width: 50%; }
+
+#userSelect {
+  margin: 30px 0 0;
+  display: flex; }
+  #userSelect label {
+    padding: inherit;
+    position: inherit;
+    margin: 0 1.25rem 0 0; }
+
+#appointmentForm div:not(:first-child) {
+  margin: 20px 0 0 0; }
+
+input[type="date"] {
+  margin: 0 0 0 88px; }
+
+.error {
+  color: red;
+  margin: 5px; }
+
+.appointment label {
+  position: inherit; }
+
+.appointment input[type="date"] {
+  margin: 0; }
+
+.test-type-button {
+  margin-left: 20px; }
+
+#comments {
+  resize: none;
+  white-space: pre; }

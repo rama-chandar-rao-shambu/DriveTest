@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%-include('layouts/header');-%>
+    <body>
+        <!-- Navigation-->
+        <%-include('layouts/navbar');-%>
+
+        
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('assets/img/gTest.jpg')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="site-heading">
+                            <h1>G Drive Test</h1>
+                            <span class="subheading">Getting your G Licence? You are in the right place</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <main class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <p>Please fill the details and submit to book a G Drive Test</p>
+                        <div class="my-5">
+                            <% if(errors != null && errors.length > 0){ %>
+                                <ul class="list-group"></ul>
+                                    <% for (let i = 0; i < errors.length; i++) { %>
+                                        <li class="list-group-item list-group-item-danger"><%= errors[i] %></li>
+                                    <% } %>
+                                </ul>
+                            <% } %>
+                            <form id="personalForm" method="POST">
+                                <legend>Examinee Information</legend>
+                                <div class="form-floating">
+                                    <input class="form-control" readonly value="<%= user?.firstName %>" id="firstName"/>
+                                    <label for="firstName">First Name</label>
+                                </div>
+                                <div class="form-floating">
+                                    <input class="form-control" readonly id="lastName" value="<%= user?.lastName %>"/>
+                                    <label for="lastName">Last Name</label>
+                                </div>
+                                <div class="form-floating">
+                                    <input class="form-control" id="licenseNo" value="<%= user?.licenseNo %>" readonly/>
+                                    <label for="licenseNo">License</label>
+                                </div>
+                                <div class="form-floating">
+                                    <input class="form-control" id="age" value="<%= user?.age %>" readonly/>
+                                    <label for="age">Age</label>
+                                </div>
+                                <div class="form-floating">
+                                    <input class="form-control" id="dob" value="<%= user?.dob %>" readonly/>
+                                    <label for="dob">DOB (dd/mm/yyyy)</label>
+                                </div>
+                                <br />
+                                <label>Examinee's Car Information</label>
+                                <br />
+                                <div class="form-floating">
+                                    <input class="form-control" id="make" value="<%= user?.carDetails?.make %>"
+                                        name="make" type="text" pattern="^[a-zA-Z ]+$" placeholder="Enter Make..." required />
+                                    <label for="make">Car's Make Name</label>
+                                    <div class="invalid-feedback" data-sb-feedback="make:required">Car's Make is required.</div>
+                                </div>
+                                <div class="form-floating">
+                                    <input class="form-control" id="model" pattern="^[a-zA-Z0-9 ]+$" value="<%= user?.carDetails?.model %>" name="model" type="text" placeholder="Enter model..." required />
+                                    <label for="model">Model</label>
+                                    <div class="invalid-feedback" data-sb-feedback="model:required">Model is required.</div>
+                                </div>
+                                <div class="form-floating">
+                                    <input class="form-control" id="year" name="year" value="<%= user?.carDetails?.year %>"
+                                        pattern="^[12][0-9]{3}$"  type="number" placeholder="Enter year..." required />
+                                    <label for="year">Year</label>
+                                    <div class="invalid-feedback" data-sb-feedback="year:required">Year is required.</div>
+                                </div>
+                                <div class="form-floating">
+                                    <input class="form-control" id="plateNo" pattern="^[a-zA-Z0-9]+$" value="<%= user?.carDetails?.plateNo %>"
+                                        name="plateNo" type="text" placeholder="Enter plate number..." required />
+                                    <label for="plateNo">Plate Number</label>
+                                    <div class="invalid-feedback" data-sb-feedback="plateNo:required">Plate Number is required.</div>
+                                </div>
+                                <br />
+                                <!-- Submit Button-->
+                                <div class="text-center">
+                                    <button class="btn btn-primary text-uppercase" id="submitButton" type="submit">Submit</button>
+                                </div>
+                            </form>
+
+
+                            <form id="personalForm" data-sb-form-api-token="API_TOKEN" method="POST" action="/G_Test/bookAppointment">
+                                <legend>Appointment Information</legend>
+                                <div class="form-floating">
+                                    <input class="form-control" name="testType" id="testType" value='G' disabled>
+                                    <label for="testType">Test Type</label>
+                                </div>
+                                <div class="form-floating appointment">
+                                    <label for="date">Choose Appointment date:</label>
+                                    <input type="date" name="date" id="addDate" onchange="checkDate('input',this);return false;"
+                                        value="<%= date %>" min="<%= minDate %>" required>
+                                </div>
+                                <div class="form-floating appointment">
+                                    <label for="time">Choose Appointment time: </label>
+                                    <select name="time" id="time" required>
+                                        <% if(time) {%>
+                                            <option selected disabled><%= time %></option>
+                                        <% } %>
+                                        <% if(appointment.size > 0) {%>
+                                            <% appointment.forEach((times, _) =>  { %>
+                                                <% times.forEach(val =>  { %>
+                                                    <option><%= val %></option>
+                                                <% }) %>
+                                            <% }) %>
+                                        <% } else { %>
+                                            <option selected disabled>No slots</option>
+                                        <% } %>
+                                    </select>
+                                </div>
+                                <% if(user?.testType && user?.testType?.toUpperCase() === 'G') { %>
+                                    <div class="form-outline">
+                                        <label for="comment">Comments</label>
+                                        <textarea class="form-control" id="comment" name="comment" disabled rows="3"><%= user?.comment %></textarea>
+                                    </div>
+                                    <br>
+                                    <div class="form-floating">
+                                        <input class="form-control" name="status" id="status" value="<%= typeof user.status  === 'boolean' && user.comment ? user.status ? 'Passed' : 'Failed' : 'NA' %>" disabled>
+                                        <label for="status">Status</label>
+                                    </div>
+                                <%}%>
+                                <br>
+                                <div class="text-center">
+                                    <button class="btn btn-primary text-uppercase" id="book" type="submit">Book Appointment</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script>
+            function checkDate(event, obj){
+                const a = document.createElement("a");
+                a.href="/G_Test/"+obj.value;
+                a.click();
+            }
+        </script>
+
+        <!-- Footer-->
+        <%-include('layouts/footer');-%>
+        
+        <!-- Bootstrap core JS-->
+
+        <%-include('layouts/scripts');-%>
+    </body>
+</html>

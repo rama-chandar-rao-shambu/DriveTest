@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%-include('layouts/header');-%>
+    <body>
+        <!-- Navigation-->
+        <%-include('layouts/navbar');-%>
+
+        
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('assets/img/gTest.jpg')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="site-heading">
+                            <h1>Examiner</h1>
+                            <span class="subheading">Approve/Reject license</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <main class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-xl">
+                        <h2 class="text-center">Click to View Examinee Details</h2>
+                        <div class="my-5">
+                            <% if(errors != null && errors.length > 0){ %>
+                                <ul class="list-group"></ul>
+                                    <% for (let i = 0; i < errors.length; i++) { %>
+                                        <li class="list-group-item list-group-item-danger"><%= errors[i] %></li>
+                                    <% } %>
+                                </ul>
+                            <% } %>
+                            <form method="GET">
+                                <div class="form-floating appointment">
+                                    <label for="time">Choose Test Type: </label>
+                                    <select name="testType" id="testType">
+                                        <% if(testType === 'ALL') { %>
+                                            <option value="ALL" selected>ALL</option>
+                                        <% } else {%>
+                                            <option value="ALL">ALL</option>
+                                        <% }%>
+                                        <% if(testType === 'G') { %>
+                                            <option value="G" selected>G</option>
+                                        <% } else {%>
+                                            <option value="G">G</option>
+                                        <% }%>
+                                        <% if(testType === 'G2') { %>
+                                            <option value="G2" selected>G2</option>
+                                        <% } else {%>
+                                            <option value="G2">G2</option>
+                                        <% }%>
+                                    </select>
+                                    <button class="btn btn-primary text-uppercase test-type-button" id="submitButton" type="submit">Submit</button>
+                            </form>
+
+                            <% if(user.length > 0) {%>
+                                <table class="table table-striped">
+                                    <thead>
+                                      <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">First Name</th>
+                                        <th scope="col">Last Name</th>
+                                        <th scope="col">Appointment Date</th>
+                                        <th scope="col">Appointment Time</th>
+                                        <th scope="col">Test Type</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% for (let i = 1; i <= user.length; i++) { %>
+                                            <tr>
+                                                <td scope="row"> <%= i %></td>
+                                                <td>
+                                                    <a class="text-primary" href="<%= '/Examiner/' + testType + '/' + user[i-1]._id %>">
+                                                        <%= user[i-1].firstName %>
+                                                    </a>
+                                                </td>
+                                                <td><%= user[i-1].lastName %></td>
+                                                <td><%= user[i-1].appointmentId.date %></td>
+                                                <td><%= user[i-1].appointmentId.time %></td>
+                                                <td><%= user[i-1].testType %></td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            <% } else { %>
+                                <div>
+                                    <p>No Appointments available</p>
+                                </div>
+                            <% } %>
+                        </div>
+                        <% if(displayUserDetails) { %>
+                            <% const ref = "/Examiner/" + testType + "/" + matchedUser._id%>
+                            <form id="personalForm" method="POST" action="<%= ref %>">
+                                <legend>User Details</legend>
+                                <div class="form-floating">
+                                    <input class="form-control" readonly value="<%= matchedUser?.firstName %>" id="firstName"/>
+                                    <label for="firstName">First Name</label>
+                                </div>
+                                <br>
+                                <div class="form-floating">
+                                    <input class="form-control" readonly id="lastName" value="<%= matchedUser?.lastName %>"/>
+                                    <label for="lastName">Last Name</label>
+                                </div>
+                                <br>
+                                <div class="form-floating">
+                                    <input class="form-control" id="licenseNo" value="<%= matchedUser?.licenseNo %>" readonly/>
+                                    <label for="licenseNo">License</label>
+                                </div>
+                                <br>
+                                <div class="form-floating">
+                                    <input class="form-control" id="age" value="<%= matchedUser?.age %>" readonly/>
+                                    <label for="age">Age</label>
+                                </div>
+                                <br>
+                                <div class="form-floating">
+                                    <input class="form-control" id="make" value="<%= matchedUser?.carDetails?.make %>" readonly/>
+                                    <label for="make">Car's Make Name</label>
+                                </div>
+                                <div class="form-floating">
+                                    <input class="form-control" id="plateNo" value="<%= matchedUser?.carDetails?.plateNo %>" readonly/>
+                                    <label for="plateNo">Plate Number</label>
+                                </div>
+                                <br>
+                                <div class="form-outline">
+                                    <label for="comments">Comments</label>
+                                    <textarea class="form-control" id="comments" name="comments" rows="3" required></textarea>
+                                </div>
+                                <br>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" value="pass" name="status" id="pass">
+                                    <label class="form-check-label" for="pass">
+                                      Pass
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" value="fail" name="status" id="fail" checked>
+                                    <label class="form-check-label" for="fail">
+                                      Fail
+                                    </label>
+                                </div>
+                                <br />
+                                <!-- Submit Button-->
+                                <div class="text-center">
+                                    <button class="btn btn-primary text-uppercase" id="submitButton" type="submit">Submit</button>
+                                </div>
+                            </form>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- Footer-->
+        <%-include('layouts/footer');-%>
+        
+        <!-- Bootstrap core JS-->
+
+        <%-include('layouts/scripts');-%>
+    </body>
+</html>

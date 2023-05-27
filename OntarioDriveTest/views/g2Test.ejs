@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%-include('layouts/header');-%>
+    <body>
+        <!-- Navigation-->
+        <%-include('layouts/navbar');-%>
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('assets/img/g2Test.jpeg')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="site-heading">
+                            <h1>G2 Drive Test</h1>
+                            <span class="subheading">One step to acheive G Licence</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <main class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <p>Please fill the details and submit to book a G2 Drive Test</p>
+                        <div class="my-5">
+                            <% if(errors != null && errors.length > 0){ %>
+                                <ul class="list-group"></ul>
+                                    <% for (let i = 0; i < errors.length; i++) { %>
+                                        <li class="list-group-item list-group-item-danger"><%= errors[i] %></li>
+                                    <% } %>
+                                </ul>
+                            <% } %>
+                            <form id="personalForm" data-sb-form-api-token="API_TOKEN" method="POST">
+                                <legend>Examinee Information</legend>
+                                <div class="form-floating">
+                                    <input class="form-control" value="<%= user?.firstName %>" id="firstName" name="firstName" type="text" placeholder="Enter first name..." required />
+                                    <label for="firstName">First Name</label>
+                                    <div class="invalid-feedback">First Name is required.</div>
+                                </div>
+                                <div class="form-floating">
+                                    <input class="form-control" id="lastName" value="<%= user?.lastName %>" name="lastName" type="text" placeholder="Enter last name..." required />
+                                    <label for="lastName">Last Name</label>
+                                    <div class="invalid-feedback" data-sb-feedback="lastName:required">Last Name is required.</div>
+                                </div>
+                                <div class="form-floating">
+                                    <input class="form-control" id="licenseNo" value="<%= user?.licenseNo %>" name="licenseNo" maxlength="8" type="text" placeholder="Enter license number..." required />
+                                    <label for="licenseNo">License</label>
+                                    <div class="invalid-feedback" data-sb-feedback="licenseNo:required">License Number is aplha numeric.</div>
+                                </div>
+                                <div class="form-floating">
+                                    <input class="form-control" id="age" name="age" value="<%= user?.age %>" maxlength="3"  pattern="^[1-9][0-9]?$|^100$" type="text" placeholder="Enter your age..." required />
+                                    <label for="age">Age</label>
+                                    <div class="invalid-feedback" data-sb-feedback="age:required">age is required.</div>
+                                </div>
+                                <div class="form-floating">
+                                    <input class="form-control" id="dob" name="dob" value="<%= user?.dob %>" 
+                                        pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" 
+                                        type="text" maxlength="10" placeholder="Enter your DOB(DD/MM/YYYY)" required />
+                                    <label for="dob">DOB (dd/mm/yyyy)</label>
+                                    <div class="invalid-feedback" data-sb-feedback="dob:required">DOB is required.</div>
+                                </div>
+                                <br>
+                                <label>Examinee's Car Information</label>
+                                <br>
+                                <div class="form-floating">
+                                    <input class="form-control" id="make" value="<%= user?.carDetails?.make %>"
+                                        name="make" type="text" placeholder="Enter Make..." required />
+                                    <label for="make">Car's Make Name</label>
+                                    <div class="invalid-feedback" data-sb-feedback="make:required">Car's Make is required.</div>
+                                </div>
+                                <div class="form-floating">
+                                    <input class="form-control" id="model" value="<%= user?.carDetails?.model %>" name="model" type="text" placeholder="Enter model..." required />
+                                    <label for="model">Model</label>
+                                    <div class="invalid-feedback" data-sb-feedback="model:required">Model is required.</div>
+                                </div>
+                                <div class="form-floating">
+                                    <input class="form-control" id="year" name="year" value="<%= user?.carDetails?.year %>" type="number" placeholder="Enter year..." required />
+                                    <label for="year">Year</label>
+                                    <div class="invalid-feedback" data-sb-feedback="year:required">Year is required.</div>
+                                </div>
+                                <div class="form-floating">
+                                    <input class="form-control" id="plateNo"  value="<%= user?.carDetails?.plateNo %>"
+                                        name="plateNo" type="text" placeholder="Enter plate number..." required />
+                                    <label for="plateNo">Plate Number</label>
+                                    <div class="invalid-feedback" data-sb-feedback="plateNo:required">Plate Number is required.</div>
+                                </div>
+                                <br>
+                                <!-- Submit Button-->
+                                <div class="text-center">
+                                    <button class="btn btn-primary text-uppercase" id="submitButton" type="submit">Submit</button>
+                                </div>
+                            </form>
+
+                            <form id="personalForm" data-sb-form-api-token="API_TOKEN" method="POST" action="/G2_Test/bookAppointment">
+                                <legend>Appointment Information</legend>
+                                <div class="form-floating">
+                                    <input class="form-control" name="testType" id="testType" value='G2' disabled>
+                                    <label for="testType">Test Type</label>
+                                </div>
+                                <div class="form-floating appointment">
+                                    <label for="date">Choose Appointment date:</label>
+                                    <input type="date" name="date" id="addDate" onchange="checkDate('input',this);return false;"
+                                        value="<%= date %>" min="<%= minDate %>" required>
+                                </div>
+                                <div class="form-floating appointment">
+                                    <label for="time">Choose Appointment time: </label>
+                                    <select name="time" id="time" required>
+                                        <% if(time) {%>
+                                            <option selected disabled><%= time %></option>
+                                        <% } %>
+                                        <% if(appointment.size > 0) {%>
+                                            <% appointment.forEach((times, _) =>  { %>
+                                                <% times.forEach(val =>  { %>
+                                                    <option><%= val %></option>
+                                                <% }) %>
+                                            <% }) %>
+                                        <% } else { %>
+                                            <option selected disabled>No slots</option>
+                                        <% } %>
+                                    </select>
+                                </div>
+                                <% if(user?.testType && date && time && user?.testType?.toUpperCase() === 'G2') { %>
+                                    <div class="form-outline">
+                                        <label for="comment">Comments</label>
+                                        <textarea class="form-control" id="comment" name="comment" disabled rows="3"><%= user?.comment %></textarea>
+                                    </div>
+                                    <br>
+                                    <div class="form-floating">
+                                        <input class="form-control" name="status" id="status" value="<%= typeof user.status  === 'boolean' && user.comment ? user.status ? 'Passed' : 'Failed' : 'NA' %>" disabled>
+                                        <label for="status">Status</label>
+                                    </div>
+                                <%}%>
+                                <br>
+                                <div class="text-center">
+                                    <button class="btn btn-primary text-uppercase" id="book" type="submit">Book Appointment</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- Footer-->
+        <%-include('layouts/footer');-%>
+        
+        <!-- Bootstrap core JS-->
+
+        <%-include('layouts/scripts');-%>
+        <script>
+            function checkDate(event, obj){
+                const a = document.createElement("a");
+                a.href="/G2_Test/"+obj.value;
+                a.click();
+            }
+        </script>
+    </body>
+</html>

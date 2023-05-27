@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%-include('layouts/header');-%>
+    <body>
+        <!-- Navigation-->
+        <%-include('layouts/navbar');-%>
+
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('assets/img/driveTest.jpg')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="site-heading">
+                            <h1>Appointments</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Main Content-->
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-xl">
+                    <div class="my-5">  
+                        <% if(success != null && success.length > 0){ %>
+                            <ul class="list-group"></ul>
+                                <% for (let i = 0; i < success.length; i++) { %>
+                                    <li class="list-group-item list-group-item-success"><%= success[i] %></li>
+                                <% } %>
+                            </ul>
+                            <br>
+                        <% } %>
+                        <form action="/appointment" method="POST" id="appointmentForm">
+                            <div>
+                                <label for="date">Add date:</label>
+                                <input type="date" name="date" id="addDate" onchange="checkDate('input',this);return false;"
+                                    value="<%= date %>" min="<%= minDate %>" required>
+                            </div>
+                            <div>
+                                <% const timing = ['9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00']  %>
+                                <label for="time">Choose a time slot: </label>
+                                <select name="time" id="time" required>
+                                    <% let valSelected = true %>
+                                    <% timing.forEach((val, i) =>  { %>
+                                        <% if(!appointment.get(date)?.includes(val) && valSelected) { %> 
+                                            <option selected><%= val %></option>
+                                            <% valSelected = false %>
+                                        <%} else if(!appointment.get(date)?.includes(val)) { %> 
+                                            <option><%= val %></option>
+                                        <%} else { %>
+                                            <option disabled><%= val %></option>
+                                        <% } %>
+                                    <% }) %>
+                                </select>
+                            </div>
+                            <br>
+                            <button class="btn btn-primary text-uppercase" id="submitButton" type="submit">Add</button>                           
+                        </form>
+                        <br>
+                        <div class="text-center">
+                            <a class="btn btn-primary" href="/appointment/display-ar" role="button">Display Approved and Rejected Drive Test Details</a>                         
+                        </div>
+                        <br>
+                        <% if(displayTable && user && user.length > 0) {%>
+                        <div class="my-5">
+                            <table class="table table-striped">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">First Name</th>
+                                    <th scope="col">Last Name</th>
+                                    <th scope="col">Appointment Date</th>
+                                    <th scope="col">Appointment Time</th>
+                                    <th scope="col">Test Type</th>
+                                    <th scope="col">Status</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                    <% for (let i = 1; i <= user.length; i++) { %>
+                                        <tr>
+                                            <td scope="row"> <%= i %></td>
+                                            <td>
+                                                <%= user[i-1].firstName %>
+                                            </td>
+                                            <td><%= user[i-1].lastName %></td>
+                                            <td><%= user[i-1].appointmentId.date %></td>
+                                            <td><%= user[i-1].appointmentId.time %></td>
+                                            <td><%= user[i-1].testType %></td>
+                                            <td><%= user[i-1].status ? 'Passed' : 'Failed' %></td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <% } else if(displayTable) { %>
+                            <div>
+                                <p>No Data available</p>
+                            </div>
+                        <% } %>
+                </div>
+            </div>
+        </div>
+        <!-- Footer-->
+        <%-include('layouts/footer');-%>
+        
+        <!-- Bootstrap core JS-->
+        <%-include('layouts/scripts');-%>
+
+        <script>
+            function checkDate(event, obj){
+                const a = document.createElement("a");
+                a.href="/appointment/"+obj.value;
+                a.click();
+            }
+        </script>
+       
+    </body>
+</html>
